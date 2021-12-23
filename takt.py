@@ -1,67 +1,59 @@
-import discord
-
+import discord_slash
 from discord import FFmpegOpusAudio
 from discord.ext import commands
-from discord_slash import SlashCommand
-from discord_slash.context import SlashContext
-from discord_slash.model import SlashCommandOptionType
-from discord_slash.utils.manage_commands import create_option
-from nasse.logging import LogLevels, log
+from nasse.logging import log
+from nasse.utils.regex import is_url
 from youtube_dl import YoutubeDL
 
-from config import COMMAND_PREFIX
-from error import error_handler
-
-# DEFINING CLIENT/BOT AND ITS PREFIX
-client = commands.Bot(command_prefix=COMMAND_PREFIX, case_insensitive=True)
-slash = SlashCommand(client, sync_commands=True)
+from exceptions import NotInVoiceChannel
+from bot import client, slash
 
 
-@client.event
-async def on_ready():
-    # GAME ACTIVITY
-    await client.change_presence(activity=discord.Game(name='!saikihelp'))
-    log("Takt is ready", level=LogLevels.INFO)
+async def play(context: commands.Context, link: str):
+    if context.author.voice is None:
+        raise NotInVoiceChannel
 
+    if context.voice_client is None:  # not connected yet to any voice channel
+        await context.author.voice.channel.connect()
+    else:
+        await context.voice_client.move_to(context.author.voice.channel)
+    context.voice_client.stop()
 
-async def play(context: SlashContext, link: str):
-    try:
-        if context.author.voice is None:
-            await context.send("You do not seem to be in a voice channel")
-        if context.voice_client is None:
-            await context.author.voice.channel.connect()
-        else:
-            await context.voice_client.move_to(context.author.voice.channel)
-        context.voice_client.stop()
-        with YoutubeDL({
-            "format": "bestaudio",
-        }) as worker:
+    with YoutubeDL({
+        "format": "bestaudio",
+        "noplaylist": "True"
+    }) as worker:
+        if is_url(link):
             source = await FFmpegOpusAudio.from_probe(
                 source=worker.extract_info(link, download=False)["formats"][0]["url"],
                 before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
                 options="-vn"
             )
-            context.voice_client.play(source)
-    except Exception as err:
-        await error_handler(context=context, error=err)
+        else:
+            source = await FFmpegOpusAudio.from_probe(
+                source=worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]["url"],
+                before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
+                options="-vn"
+            )
+        context.voice_client.play(source)
 
 
 @client.command(name="play", pass_context=True)
-async def play_receiver(context, link: str):
-    await play(context, link)
+async def play_receiver(context: commands.Context, link: str):
+    await play(context, str(context.message).split()[1:])
 
 
 @slash.slash(name="play",
              description="Plays the given URL in the connected voice channel",
              options=[
-                 create_option(
+                 discord_slash.utils.manage_commands.create_option(
                      name="link",
                      description="the URL of the video to play",
-                     option_type=SlashCommandOptionType.STRING,
+                     option_type=discord_slash.model.SlashCommandOptionType.STRING,
                      required=True
                  )
              ])
-async def play_receiver_slash(context: SlashContext, link: str):
+async def play_receiver_slash(context, link: str):
     await play(context=context, link=link)
 
 

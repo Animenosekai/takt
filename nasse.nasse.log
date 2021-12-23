@@ -22,3 +22,39 @@
 1640228636.693718｜[ERROR] [error.error_handler] An unknown error occured: TypeError string indices must be integers
 1640228659.14154｜[DEBUG] [__main__] Starting up...
 1640228661.727052｜[INFO] [takt.on_ready] Takt is ready
+1640282061.439649｜[DEBUG] [__main__] Starting up...
+1640282089.306488｜[DEBUG] [__main__] Starting up...
+1640282091.954405｜[INFO] [takt.on_ready] Takt is ready
+1640284396.500339｜[DEBUG] [__main__] Starting up...
+1640284397.73787｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 104.47 ms)
+1640284399.747251｜[INFO] [bot.on_ready] Takt is ready
+1640284628.922011｜[DEBUG] [__main__] Starting up...
+1640284629.711909｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 102.41 ms)
+1640284631.719986｜[INFO] [bot.on_ready] Takt is ready
+1640284648.011249｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] An unexpected error occured on the server
+1640284659.813195｜[DEBUG] [__main__] Starting up...
+1640284660.551017｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 116.23 ms)
+1640284662.558197｜[INFO] [bot.on_ready] Takt is ready
+1640284664.685826｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] An unexpected error occured on the server
+1640284664.69026｜[ERROR] [error.error_handler] An unknown error occured: CommandInvokeError Command raised an exception: NotInVoiceChannel: An unexpected error occured on the server
+1640284721.776744｜[DEBUG] [__main__] Starting up...
+1640284722.423206｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 101.5 ms)
+1640284724.432744｜[INFO] [bot.on_ready] Takt is ready
+1640284728.13907｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] An unexpected error occured on the server
+1640284728.143277｜[ERROR] [error.error_handler] An unknown error occured: CommandInvokeError Command raised an exception: NotInVoiceChannel: An unexpected error occured on the server
+1640284774.603765｜[DEBUG] [__main__] Starting up...
+1640284775.253275｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 106.4 ms)
+1640284777.257334｜[INFO] [bot.on_ready] Takt is ready
+1640284779.467927｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] An unexpected error occured on the server
+1640284779.472523｜[ERROR] [error.error_handler] An unknown error occured: CommandInvokeError Command raised an exception: NotInVoiceChannel: An unexpected error occured on the server
+1640284944.424128｜[DEBUG] [__main__] Starting up...
+1640284945.030846｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 102.08 ms)
+1640284947.039357｜[INFO] [bot.on_ready] Takt is ready
+1640284950.011385｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] An unexpected error occured on the server
+1640284996.81218｜[DEBUG] [__main__] Starting up...
+1640284997.438886｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 122.44 ms)
+1640284999.518166｜[INFO] [bot.on_ready] Takt is ready
+1640285004.629698｜[DEBUG] [__main__] Starting up...
+1640285005.301161｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 125.61 ms)
+1640285007.312114｜[INFO] [bot.on_ready] Takt is ready
+1640285013.224252｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] {mention} ❌ You do not seem to be in a voice channel
