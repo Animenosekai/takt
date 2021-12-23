@@ -58,3 +58,10 @@
 1640285005.301161｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 125.61 ms)
 1640285007.312114｜[INFO] [bot.on_ready] Takt is ready
 1640285013.224252｜[ERROR] [nasse.exceptions.base.NotInVoiceChannel.__init__] {mention} ❌ You do not seem to be in a voice channel
+1640285131.100006｜[ERROR] [error.error_handler] An unknown error occured: IndexError list index out of range
+1640285340.223929｜[DEBUG] [__main__] Starting up...
+1640285341.065607｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 115.15 ms)
+1640285343.070615｜[INFO] [bot.on_ready] Takt is ready
+1640286833.000554｜[DEBUG] [__main__] Starting up...
+1640286833.636215｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 102.42 ms)
+1640286835.643692｜[INFO] [bot.on_ready] Takt is ready

@@ -1,12 +1,13 @@
-import discord_slash
+import discord
 from discord import FFmpegOpusAudio
 from discord.ext import commands
 from nasse.logging import log
 from nasse.utils.regex import is_url
 from youtube_dl import YoutubeDL
 
-from exceptions import NotInVoiceChannel
-from bot import client, slash
+from bot import client  # to redirect the import outside (and at the same time load takt)
+
+from exceptions import NoVoiceClient, NotInVoiceChannel
 
 
 async def play(context: commands.Context, link: str):
@@ -38,36 +39,67 @@ async def play(context: commands.Context, link: str):
         context.voice_client.play(source)
 
 
-@client.command(name="play", pass_context=True)
-async def play_receiver(context: commands.Context, link: str):
-    await play(context, str(context.message).split()[1:])
+async def pause(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+    context.voice_client.pause()
+    await context.send(f"{context.author.mention} Paused")
 
 
-@slash.slash(name="play",
-             description="Plays the given URL in the connected voice channel",
-             options=[
-                 discord_slash.utils.manage_commands.create_option(
-                     name="link",
-                     description="the URL of the video to play",
-                     option_type=discord_slash.model.SlashCommandOptionType.STRING,
-                     required=True
-                 )
-             ])
-async def play_receiver_slash(context, link: str):
-    await play(context=context, link=link)
+async def resume(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+    if context.voice_client.is_playing():
+        await context.send(f"{context.author.mention} Already playing")
+        return
+    context.voice_client.resume()
+    await context.send(f"{context.author.mention} Resumed")
+
+
+async def stop(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+    context.voice_client.stop()
+    await context.send(f"{context.author.mention} Stopped the music!")
+
+
+async def playing(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+    if context.voice_client.is_playing():
+        await context.send(f"{context.author.mention} It seems that something is being played")
+    else:
+        await context.send(f"{context.author.mention} Nope, nothing is being played")
+
+
+async def paused(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+    if context.voice_client.is_paused():
+        await context.send(f"{context.author.mention} It seems that the music is paused")
+    else:
+        await context.send(f"{context.author.mention} Nope it seems that no music is paused right now")
+
+
+async def connected(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+    if context.voice_client.is_connected():
+        await context.send(f"{context.author.mention} Yes I am connected")
+    else:
+        await context.send(f"{context.author.mention} Nope I'm not connected")
+
+
+async def latency(context: commands.Context):
+    if context.voice_client is None:
+        raise NoVoiceClient
+
+    await context.send(f"{context.author.mention} The current latency is {round(context.voice_client.latency * 1000, 2)} (average: {round(context.voice_client.average_latency * 1000, 2)})")
 
 
 # Basic API
 """
 discord.VoiceClient().play
-discord.VoiceClient().pause
-discord.VoiceClient().average_latency
-discord.VoiceClient().is_connected
-discord.VoiceClient().is_paused
-discord.VoiceClient().latency
-discord.VoiceClient().resume
-discord.VoiceClient().stop
-discord.VoiceClient().is_playing
 """
 
 # TODO

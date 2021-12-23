@@ -3,9 +3,15 @@ run.py
 
 Runner for Takt.
 """
-from takt import client
+from nasse.config import General
 from nasse.logging import log
+
+import receivers
+from auth import TOKEN
+from takt import client
+
+General.NAME = "Takt"
 
 if __name__ == '__main__':
     log("Starting up...")
-    client.run("ODg4MTY0NzYyNTMyMzQzODE5.YUOt5A.dN2pS29oJrKtEojENV0Tsui2Smc")
+    client.run(TOKEN)

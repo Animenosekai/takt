@@ -17,3 +17,7 @@ class TaktException(NasseException):
 
 class NotInVoiceChannel(TaktException):
     MESSAGE = "{mention} ❌ You do not seem to be in a voice channel"
+
+
+class NoVoiceClient(TaktException):
+    MESSAGE = "{mention} ❌ It seems that Takt is not connected to any voice channel"
