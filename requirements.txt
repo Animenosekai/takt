@@ -1,0 +1,4 @@
+Nasse # handles the logging
+youtube_dl # handles the youtube information extraction
+discord # high level API to the Discord API
+PyNaCl # to handle voice channels
