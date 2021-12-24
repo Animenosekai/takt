@@ -2,4 +2,5 @@ Nasse # handles the logging, the regexes and the exceptions
 youtube_dl # handles the information extraction
 yt-dlp # fallback for the information extraction
 discord[voice] # high level API to the Discord API
+PyNaCl # to handle voice channels
 discord-py-slash-command # to handle slash commands
