@@ -106,6 +106,9 @@ async def skip(context: commands.Context):
 
 async def queue(context: commands.Context):
     log(f"Sending the current guild queue (guild: {context.guild.name} | {context.guild.id})")
+    if context.guild.id not in QUEUES or len(QUEUES[context.guild.id]) == 0:
+        await context.send(f"{context.author.mention} The queue is empty")
+        return
     embed = discord.Embed(title='Current Queue',
                           colour=discord.Colour.blue())
     embed.add_field(name='Queue', value="\n".join(f"{i}. {player.title}" for i, player in enumerate(QUEUES[context.guild.id], 1)))
