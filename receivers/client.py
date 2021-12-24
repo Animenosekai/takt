@@ -4,7 +4,7 @@ from bot import client
 from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear
 
 
-@client.command(name="play", pass_context=True)
+@client.command(name="play", pass_context=True, aliases=["p", "start"])
 async def play_receiver(context: commands.Context, *args):
     await play(context, " ".join(args))
 
