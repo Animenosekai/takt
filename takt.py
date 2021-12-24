@@ -17,7 +17,7 @@ def human_format(number: int):
     while abs(number) >= 1000:
         magnitude += 1
         number /= 1000
-    return f"{round(number, 2)}['', 'K', 'M', 'G', 'T', 'P'][magnitude]"
+    return f"{round(number, 2)}{['', 'K', 'M', 'G', 'T', 'P'][magnitude]}"
 
 
 def create_end_event(context: commands.Context):
@@ -118,16 +118,30 @@ async def playing(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
     if context.voice_client.is_playing():
-        embed = discord.Embed(title='Now playing', colour=discord.Colour.blue())
+        if context.voice_client.source.url:
+            embed = discord.Embed(title='Now playing', colour=discord.Colour.blue(), url=context.voice_client.source.url)
+        else:
+            embed = discord.Embed(title='Now playing', colour=discord.Colour.blue())
         if context.voice_client.source.thumbnail:
             embed.set_thumbnail(url=context.voice_client.source.thumbnail)
+
         embed.add_field(name='Title', value=context.voice_client.source.title)
-        if context.voice_client.source.detailed:
+        if context.voice_client.source.duration:
             embed.add_field(
-                name='Time', value=f"{timedelta(seconds=int(context.voice_client.source.played / 1000))}/{timedelta(seconds=context.voice_client.source.duration)}")
-            embed.add_field(name='Counter', value=f"Views: {human_format(context.voice_client.source.view_count)}\nLikes: {human_format(context.voice_client.source.like_count)}")
+                name='Time', value=f"{timedelta(seconds=int(context.voice_client.source.played / 1000))}/{timedelta(seconds=int(context.voice_client.source.duration))}")
+        else:
+            embed.add_field(name='Time', value=str(timedelta(seconds=int(context.voice_client.source.played / 1000))))
+        if context.voice_client.source.view_count:
+            value = f"Views: {human_format(context.voice_client.source.view_count)}"
+            if context.voice_client.source.like_count:
+                value += f"\nLikes: {human_format(context.voice_client.source.like_count)}"
+            embed.add_field(name='Counter', value=value)
+        elif context.voice_client.source.like_count:
+            embed.add_field(name='Counter', value=f"Likes: {human_format(context.voice_client.source.like_count)}")
+        if context.voice_client.source.channel:
             embed.add_field(name='Channel', value=context.voice_client.source.channel)
-            # embed.add_field(name='Description', value=context.voice_client.source.description)
+        # embed.add_field(name='Description', value=context.voice_client.source.description)
+        if context.voice_client.source.upload_date:
             embed.add_field(name='Uploaded', value=context.voice_client.source.upload_date.strftime("%d/%m/%Y"))
 
         await context.send(f"{context.author.mention} Now playing: {context.voice_client.source.title}", embed=embed)

@@ -21,3 +21,7 @@ class NotInVoiceChannel(TaktException):
 
 class NoVoiceClient(TaktException):
     MESSAGE = "{mention} ❌ It seems that Takt is not connected to any voice channel"
+
+
+class DownloadError(TaktException):
+    MESSAGE = "{mention} ❌ An error occured while downloading the audio. This might be because the given link is not supported."

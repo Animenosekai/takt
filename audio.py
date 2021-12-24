@@ -4,7 +4,10 @@ from datetime import datetime
 from discord.player import FFmpegOpusAudio
 from nasse.logging import log
 from nasse.utils.regex import is_url
-from youtube_dl import YoutubeDL
+from youtube_dl import YoutubeDL as YouTubeDL
+from yt_dlp import YoutubeDL as YouTubeDL_P
+
+from exceptions import DownloadError
 
 
 class TaktAudioPlayer(FFmpegOpusAudio):
@@ -16,44 +19,42 @@ class TaktAudioPlayer(FFmpegOpusAudio):
         self.info = dict(info)
         self.source = self.info["url"]
         self.played = 0
-        self.detailed = self.info["extractor"] == "youtube"
 
-        if self.detailed:
-            self.title = self.info["title"]
-            self.description = self.info["description"]
-            self.duration = self.info["duration"]
-            self.view_count = self.info["view_count"]
-            self.like_count = self.info["like_count"]
+        # infos
+        self.url = self.info.get("webpage_url", None)
+        self.title = self.info.get("title", "(Unknown Title)")
+        self.description = self.info.get("description", None)
+        self.duration = self.info.get("duration", None)  # could have my own probe
+        self.view_count = self.info.get("view_count", None)
+        self.like_count = self.info.get("like_count", None)
+        if "upload_date" in self.info:
             self.upload_date = datetime.strptime(self.info["upload_date"], "%Y%m%d")
-            self.channel = self.info["uploader"]
-            self.channel_link = self.info["uploader_url"]
-            self.thumbnail = self.info["thumbnail"]
         else:
-            # should test afterward if anything other than youtube works
-            # i could also run my own probe
-            self.title = "Unknown"
-            self.description = "N/A"
-            self.duration = 0
-            self.view_count = 0
-            self.like_count = 0
-            self.upload_date = datetime.now()
-            self.channel = "Unknown"
-            self.channel_link = None
-            self.thumbnail = None
+            self.upload_date = None
+        self.channel = self.info.get("uploader", None)
+        self.channel_link = self.info.get("uploader", None)
+        self.thumbnail = self.info.get("thumbnail", None)
 
         options += f' -filter:a "volume={volume}"'
         super().__init__(self.source, bitrate=bitrate, codec=codec, executable=executable,
                          pipe=pipe, stderr=stderr, before_options=before_options, options=options)
 
     async def open(link, *, bitrate=128, volume: float = 0.2, codec="nocopy", executable='ffmpeg', pipe=False, stderr=None, before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", options='-vn'):
-        with YoutubeDL({
-            "format": "bestaudio",
-            "noplaylist": "True"
-        }) as worker:
-            if is_url(link):
-                info = worker.extract_info(link, download=False)
-            else:
-                info = worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]
+        info = None
+        for WORKER in (YouTubeDL, YouTubeDL_P):
+            try:
+                with WORKER({
+                    "format": "bestaudio",
+                    "noplaylist": "True"
+                }) as worker:
+                    if is_url(link):
+                        info = worker.extract_info(link, download=False)
+                    else:
+                        info = worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]
+            except Exception:
+                continue
+        if info is None:
+            raise DownloadError
 
         # i need to change the codec to reencode the audio
         _, bitrate = await FFmpegOpusAudio.probe(info["url"])
