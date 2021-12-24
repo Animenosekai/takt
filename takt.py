@@ -171,7 +171,7 @@ async def latency(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
 
-    await context.send(f"{context.author.mention} The current latency is {round(context.voice_client.latency * 1000, 2)} (average: {round(context.voice_client.average_latency * 1000, 2)})")
+    await context.send(f"{context.author.mention} The current latency is {round(context.voice_client.latency * 1000, 2)}ms (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
 
 
 # Basic API

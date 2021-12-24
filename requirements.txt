@@ -1,5 +1,5 @@
-Nasse # handles the logging
+Nasse # handles the logging, the regexes and the exceptions
 youtube_dl # handles the information extraction
-yt-dlp # fallback
+yt-dlp # fallback for the information extraction
 discord # high level API to the Discord API
 PyNaCl # to handle voice channels
