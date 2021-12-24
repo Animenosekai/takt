@@ -144,7 +144,7 @@ async def playing(context: commands.Context):
         if context.voice_client.source.upload_date:
             embed.add_field(name='Uploaded', value=context.voice_client.source.upload_date.strftime("%d/%m/%Y"))
 
-        await context.send('{context.author.mention} Now playing: **{context.voice_client.source.title}**', embed=embed)
+        await context.send(f'{context.author.mention} Now playing: **{context.voice_client.source.title}**', embed=embed)
     else:
         await context.send(f"{context.author.mention} Nope, nothing is being played")
 
