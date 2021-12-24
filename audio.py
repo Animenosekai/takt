@@ -51,6 +51,7 @@ class TaktAudioPlayer(FFmpegOpusAudio):
                         info = worker.extract_info(link, download=False)
                     else:
                         info = worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]
+                break
             except Exception:
                 continue
         if info is None:
