@@ -31,6 +31,7 @@ def create_end_event(context: commands.Context):
             QUEUES[context.guild.id].pop(0)
         except IndexError:
             log("Queue is empty")
+            context.voice_client.disconnect()
             return
         if len(QUEUES[context.guild.id]) >= 1:
             log("More than one song in queue")
@@ -176,5 +177,5 @@ async def latency(context: commands.Context):
 
 # Basic API
 """
-discord.VoiceClient()
+discord.VoiceClient().disconnect()
 """
