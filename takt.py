@@ -23,24 +23,25 @@ def human_format(number: int):
 
 def create_end_event(context: commands.Context, loop: asyncio.events.AbstractEventLoop):
     def on_ended():
-        context.voice_client.stop()
-        log("Song ended")
-        if context.guild.id not in QUEUES:
-            log("No queue for current guild")
-            return
-        try:
-            QUEUES[context.guild.id].pop(0)
-        except IndexError:
-            log("Queue is empty")
-            asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
-            return
-        if len(QUEUES[context.guild.id]) >= 1:
-            log("More than one song in queue")
-            log(f"Playing {QUEUES[context.guild.id][0]}")
-            context.voice_client.play(QUEUES[context.guild.id][0])
-        else:
-            log("No more songs in queue")
-            asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
+        if context.voice_client:
+            context.voice_client.stop()
+            log("Song ended")
+            if context.guild.id not in QUEUES:
+                log("No queue for current guild")
+                return
+            try:
+                QUEUES[context.guild.id].pop(0)
+            except IndexError:
+                log("Queue is empty")
+                asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
+                return
+            if len(QUEUES[context.guild.id]) >= 1:
+                log("More than one song in queue")
+                log(f"Playing {QUEUES[context.guild.id][0]}")
+                context.voice_client.play(QUEUES[context.guild.id][0])
+            else:
+                log("No more songs in queue")
+                asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
     return on_ended
 
 
@@ -104,8 +105,6 @@ async def skip(context: commands.Context):
 
 
 async def queue(context: commands.Context):
-    if context.voice_client is None:
-        raise NoVoiceClient
     log(f"Sending the current guild queue (guild: {context.guild.name} | {context.guild.id})")
     embed = discord.Embed(title='Current Queue',
                           colour=discord.Colour.blue())
@@ -115,8 +114,6 @@ async def queue(context: commands.Context):
 
 
 async def clear(context: commands.Context):
-    if context.voice_client is None:
-        raise NoVoiceClient
     log("Clearing the queue")
     QUEUES.pop(context.guild.id, None)
     await context.send(f"{context.author.mention} Cleared the queue")
