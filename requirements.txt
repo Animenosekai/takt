@@ -3,4 +3,4 @@ youtube_dl # handles the information extraction
 yt-dlp # fallback for the information extraction
 discord # high level API to the Discord API
 PyNaCl # to handle voice channels
-discord_slash # to handle slash commands
+discord-py-slash-command # to handle slash commands
