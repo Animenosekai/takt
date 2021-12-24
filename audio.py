@@ -63,7 +63,7 @@ class TaktAudioPlayer(FFmpegOpusAudio):
 
         # i need to change the codec to reencode the audio
         _, bitrate = await FFmpegOpusAudio.probe(info["url"])
-        log("Found Bitrate: {bitrate}")
+        log(f"Found Bitrate: {bitrate}")
         return TaktAudioPlayer(info, bitrate=bitrate, volume=volume, codec=codec, executable=executable, pipe=pipe, stderr=stderr, before_options=before_options, options=options)
 
     def on_ended(self) -> bool:
