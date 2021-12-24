@@ -40,7 +40,7 @@ async def latency_receiver(context: commands.Context):
 async def queue_receiver(context: commands.Context):
     await queue(context)
 
-@client.command(name="skip", pass_context=True)
+@client.command(name="skip", pass_context=True, aliases=["s", "next"])
 async def skip_receiver(context: commands.Context):
     await skip(context)
 
