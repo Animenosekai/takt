@@ -24,7 +24,7 @@ slash = SlashCommand(client, sync_commands=True)
 @client.event
 async def on_ready():
     # GAME ACTIVITY
-    await client.change_presence(activity=discord.Game(name='!takthelp'))
+    await client.change_presence(activity=discord.Game(name=f'{COMMAND_PREFIX}help'))
     log("Takt is ready", level=LogLevels.INFO)
 
 
