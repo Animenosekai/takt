@@ -17,7 +17,7 @@ def human_format(number: int):
     while abs(number) >= 1000:
         magnitude += 1
         number /= 1000
-    return f"{round(number, 2)}{['', 'K', 'M', 'G', 'T', 'P'][magnitude]}"
+    return f"{round(number, 2)}{['', 'K', 'M', 'B', 'T', 'P'][magnitude]}"
 
 
 def create_end_event(context: commands.Context):
