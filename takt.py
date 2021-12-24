@@ -39,6 +39,7 @@ def create_end_event(context: commands.Context, loop: asyncio.events.AbstractEve
             log(f"Playing {QUEUES[context.guild.id][0]}")
             context.voice_client.play(QUEUES[context.guild.id][0])
         else:
+            log("No more songs in queue")
             asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
     return on_ended
 
@@ -48,8 +49,10 @@ async def play(context: commands.Context, link: str):
         raise NotInVoiceChannel
 
     if context.voice_client is None:  # not connected yet to any voice channel
+        log("Connecting to voice channel")
         await context.author.voice.channel.connect()
     else:
+        log("Moving to new channel")
         await context.voice_client.move_to(context.author.voice.channel)
     # context.voice_client.stop()
 
@@ -65,14 +68,17 @@ async def play(context: commands.Context, link: str):
     # print(QUEUES[context.guild.id])
     if not context.voice_client.is_playing():
         context.voice_client.play(player)
+        log(f"Playing {player}")
         await context.send(f'{context.author.mention} | ✨ Playing **"{player.title}"**')
     else:
+        log(f"Adding {player} to queue")
         await context.send(f'{context.author.mention} | 🎏 Added **"{player.title}"** to the queue')
 
 
 async def pause(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
+    log("Pausing")
     context.voice_client.pause()
     await context.send(f"{context.author.mention} Paused")
 
@@ -83,6 +89,7 @@ async def resume(context: commands.Context):
     if context.voice_client.is_playing():
         await context.send(f"{context.author.mention} Already playing")
         return
+    log("Resuming")
     context.voice_client.resume()
     await context.send(f"{context.author.mention} Resumed")
 
@@ -90,6 +97,7 @@ async def resume(context: commands.Context):
 async def skip(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
+    log("Skipping")
     loop = asyncio.get_event_loop()
     create_end_event(context, loop)()
     await context.send(f"{context.author.mention} Skipped the current song!")
@@ -98,6 +106,7 @@ async def skip(context: commands.Context):
 async def queue(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
+    log(f"Sending the current guild queue (guild: {context.guild.name} | {context.guild.id})")
     embed = discord.Embed(title='Current Queue',
                           colour=discord.Colour.blue())
     embed.add_field(name='Queue', value="\n".join(f"{i}. {player.title}" for i, player in enumerate(QUEUES[context.guild.id], 1)))
@@ -108,6 +117,7 @@ async def queue(context: commands.Context):
 async def clear(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
+    log("Clearing the queue")
     QUEUES.pop(context.guild.id, None)
     await context.send(f"{context.author.mention} Cleared the queue")
 
@@ -115,8 +125,10 @@ async def clear(context: commands.Context):
 async def stop(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
+    log("Stopping")
     QUEUES.pop(context.guild.id, None)
     context.voice_client.stop()
+    await context.voice_client.disconnect()
     await context.send(f"{context.author.mention} Stopped the music!")
 
 
@@ -124,6 +136,7 @@ async def playing(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
     if context.voice_client.is_playing():
+        log("Creating and sending the 'Now Playing' embed")
         if context.voice_client.source.url:
             embed = discord.Embed(title='Now playing', colour=discord.Colour.blue(), url=context.voice_client.source.url)
         else:
@@ -176,7 +189,8 @@ async def connected(context: commands.Context):
 async def latency(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
-
+    log(f"Bot Latency: {client.latency}")
+    log(f"Voice Latency: {round(context.voice_client.latency * 1000, 4)} (average: {round(context.voice_client.average_latency * 1000, 4)})")
     await context.send(f"{context.author.mention} The current latency is **{round(context.voice_client.latency * 1000, 2)}ms** (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
 
 

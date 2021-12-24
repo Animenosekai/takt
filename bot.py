@@ -14,9 +14,11 @@ from config import COMMAND_PREFIX
 
 async def prefix(bot, msg):
     """Defines the prefix for the bot"""
+    log(f"The defined prefix is {COMMAND_PREFIX} (or mention)")
     return commands.when_mentioned_or(COMMAND_PREFIX)(bot, msg)
 
 # DEFINING CLIENT/BOT AND ITS PREFIX
+log("Defining client and slash client")
 client = commands.Bot(command_prefix=prefix, case_insensitive=True)
 slash = SlashCommand(client, sync_commands=True)
 

@@ -1,4 +1,3 @@
-from asyncio import run
 from datetime import datetime
 
 from discord.player import FFmpegOpusAudio
@@ -35,11 +34,15 @@ class TaktAudioPlayer(FFmpegOpusAudio):
         self.channel_link = self.info.get("uploader", None)
         self.thumbnail = self.info.get("thumbnail", None)
 
+        log(f"Setting the volume to {volume}")
         options += f' -filter:a "volume={volume}"'
         super().__init__(self.source, bitrate=bitrate, codec=codec, executable=executable,
                          pipe=pipe, stderr=stderr, before_options=before_options, options=options)
 
+        log(f"Created {self}")
+
     async def open(link, *, bitrate=128, volume: float = 0.2, codec="nocopy", executable='ffmpeg', pipe=False, stderr=None, before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", options='-vn'):
+        log(f"Creating a new TaktAudioPlayer with {link}")
         info = None
         for WORKER in (YouTubeDL, YouTubeDL_P):
             try:
@@ -51,6 +54,7 @@ class TaktAudioPlayer(FFmpegOpusAudio):
                         info = worker.extract_info(link, download=False)
                     else:
                         info = worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]
+                log("Found info")
                 break
             except Exception:
                 continue
@@ -59,6 +63,7 @@ class TaktAudioPlayer(FFmpegOpusAudio):
 
         # i need to change the codec to reencode the audio
         _, bitrate = await FFmpegOpusAudio.probe(info["url"])
+        log("Found Bitrate: {bitrate}")
         return TaktAudioPlayer(info, bitrate=bitrate, volume=volume, codec=codec, executable=executable, pipe=pipe, stderr=stderr, before_options=before_options, options=options)
 
     def on_ended(self) -> bool:
