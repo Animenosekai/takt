@@ -2,7 +2,7 @@ from bot import slash
 from discord_slash.utils.manage_commands import create_option
 from discord_slash.model import SlashCommandOptionType
 
-from takt import play
+from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear
 
 
 @slash.slash(name="play",
