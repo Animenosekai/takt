@@ -60,9 +60,9 @@ async def play(context: commands.Context, link: str):
     # print(QUEUES[context.guild.id])
     if not context.voice_client.is_playing():
         context.voice_client.play(player)
-        await context.send(f"{context.author.mention} ✨ Playing {player.title}")
+        await context.send(f'{context.author.mention} | ✨ Playing **"{player.title}"**')
     else:
-        await context.send(f"{context.author.mention} 🎏 Added {player.title} to the queue")
+        await context.send(f'{context.author.mention} | 🎏 Added **"{player.title}"** to the queue')
 
 
 async def pause(context: commands.Context):
@@ -144,7 +144,7 @@ async def playing(context: commands.Context):
         if context.voice_client.source.upload_date:
             embed.add_field(name='Uploaded', value=context.voice_client.source.upload_date.strftime("%d/%m/%Y"))
 
-        await context.send(f"{context.author.mention} Now playing: {context.voice_client.source.title}", embed=embed)
+        await context.send('{context.author.mention} Now playing: **{context.voice_client.source.title}**', embed=embed)
     else:
         await context.send(f"{context.author.mention} Nope, nothing is being played")
 
@@ -171,7 +171,7 @@ async def latency(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
 
-    await context.send(f"{context.author.mention} The current latency is {round(context.voice_client.latency * 1000, 2)}ms (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
+    await context.send(f"{context.author.mention} The current latency is **{round(context.voice_client.latency * 1000, 2)}ms** (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
 
 
 # Basic API
