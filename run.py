@@ -6,7 +6,7 @@ Runner for Takt.
 from nasse.config import General
 from nasse.logging import log
 
-import receivers
+from receivers import client, slash
 try:
     from auth import TOKEN
 except ImportError:
