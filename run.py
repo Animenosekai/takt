@@ -7,7 +7,10 @@ from nasse.config import General
 from nasse.logging import log
 
 import receivers
-from auth import TOKEN
+try:
+    from auth import TOKEN
+except ImportError:
+    from auth_heroku import TOKEN
 from takt import client
 
 General.NAME = "Takt"
