@@ -1,3 +1,4 @@
+import asyncio
 from datetime import timedelta
 
 import discord
@@ -20,7 +21,7 @@ def human_format(number: int):
     return f"{round(number, 2)}{['', 'K', 'M', 'B', 'T', 'P'][magnitude]}"
 
 
-def create_end_event(context: commands.Context):
+def create_end_event(context: commands.Context, loop: asyncio.events.AbstractEventLoop):
     def on_ended():
         context.voice_client.stop()
         log("Song ended")
@@ -31,12 +32,14 @@ def create_end_event(context: commands.Context):
             QUEUES[context.guild.id].pop(0)
         except IndexError:
             log("Queue is empty")
-            context.voice_client.disconnect()
+            asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
             return
         if len(QUEUES[context.guild.id]) >= 1:
             log("More than one song in queue")
             log(f"Playing {QUEUES[context.guild.id][0]}")
             context.voice_client.play(QUEUES[context.guild.id][0])
+        else:
+            asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
     return on_ended
 
 
@@ -51,7 +54,8 @@ async def play(context: commands.Context, link: str):
     # context.voice_client.stop()
 
     player = await TaktAudioPlayer.open(link)
-    player.on_ended = create_end_event(context)
+    loop = asyncio.get_event_loop()
+    player.on_ended = create_end_event(context, loop)
 
     try:
         QUEUES[context.guild.id].append(player)
@@ -86,7 +90,8 @@ async def resume(context: commands.Context):
 async def skip(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
-    create_end_event(context)()
+    loop = asyncio.get_event_loop()
+    create_end_event(context, loop)()
     await context.send(f"{context.author.mention} Skipped the current song!")
 
 
