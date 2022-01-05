@@ -113,6 +113,8 @@ async def skip(context: commands.Context):
 
 
 async def loop(context: commands.Context):
+    if context.guild.id not in SERVERS:
+        SERVERS[context.guild.id] = {}
     if SERVERS.get(context.guild.id, {}).get("LOOP", False):
         SERVERS[context.guild.id]["LOOP"] = False
         await context.send(f"{context.author.mention} | 🏮 Loop disabled")
