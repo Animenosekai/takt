@@ -2,7 +2,7 @@ from bot import slash
 from discord_slash.utils.manage_commands import create_option
 from discord_slash.model import SlashCommandOptionType
 
-from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear
+from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear, loop, looping
 
 
 @slash.slash(name="play",
@@ -48,3 +48,7 @@ async def skip_receiver_slash(context):
 async def clear_receiver_slash(context):
     await clear(context=context)
 
+
+@slash.slash(name="loop", description="Loops the current song")
+async def loop_receiver_slash(context):
+    await loop(context=context)

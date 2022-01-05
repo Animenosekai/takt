@@ -1,7 +1,7 @@
 from discord.ext import commands
 from bot import client
 
-from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear
+from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear, loop, looping
 
 
 @client.command(name="play", pass_context=True, aliases=["p", "start"])
@@ -47,3 +47,11 @@ async def skip_receiver(context: commands.Context):
 @client.command(name="clear", pass_context=True)
 async def clear_receiver(context: commands.Context):
     await clear(context)
+
+@client.command(name="loop", pass_context=True, aliases=["repeat", "repeat-song", "repeatsong"])
+async def loop_receiver(context: commands.Context):
+    await loop(context)
+
+@client.command(name="looping", pass_context=True, aliases=["is-looping", "islooping"])
+async def looping_receiver(context: commands.Context):
+    await looping(context)

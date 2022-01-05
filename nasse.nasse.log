@@ -65,3 +65,5 @@
 1640286833.000554｜[DEBUG] [__main__] Starting up...
 1640286833.636215｜[INFO] [bot.on_connect] Takt is connected to Discord (latency: 102.42 ms)
 1640286835.643692｜[INFO] [bot.on_ready] Takt is ready
+1640879807.422661｜[DEBUG] [bot] Defining client and slash client
+1640879807.464569｜[DEBUG] [bot] The defined prefix is '+' (or mention)

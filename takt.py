@@ -10,7 +10,7 @@ from bot import \
     client  # to redirect the import outside (and at the same time load takt)
 from exceptions import NotInVoiceChannel, NoVoiceClient
 
-QUEUES = {}
+SERVERS = {}
 
 
 def human_format(number: int):
@@ -26,22 +26,28 @@ def create_end_event(context: commands.Context, loop: asyncio.events.AbstractEve
         if context.voice_client:
             context.voice_client.stop()
             log("Song ended")
-            if context.guild.id not in QUEUES:
+            if context.guild.id not in SERVERS:
                 log("No queue for current guild")
                 return
+            QUEUE = SERVERS[context.guild.id].get("QUEUE", [])
             try:
-                QUEUES[context.guild.id].pop(0)
+                now_playing = QUEUE.pop(0)
             except IndexError:
                 log("Queue is empty")
                 asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
                 return
-            if len(QUEUES[context.guild.id]) >= 1:
+
+            if SERVERS[context.guild.id].get("LOOP", False):  # loop mechanism
+                QUEUE.append(now_playing)
+
+            if len(QUEUE) >= 1:
                 log("More than one song in queue")
-                log(f"Playing {QUEUES[context.guild.id][0]}")
-                context.voice_client.play(QUEUES[context.guild.id][0])
+                log(f"Playing {QUEUE[0]}")
+                context.voice_client.play(QUEUE[0])
             else:
                 log("No more songs in queue")
                 asyncio.run_coroutine_threadsafe(context.voice_client.disconnect(), loop)
+                asyncio.run_coroutine_threadsafe(context.send("🛫 No more songs in queue, exiting..."), loop)
     return on_ended
 
 
@@ -61,12 +67,14 @@ async def play(context: commands.Context, link: str):
     loop = asyncio.get_event_loop()
     player.on_ended = create_end_event(context, loop)
 
-    try:
-        QUEUES[context.guild.id].append(player)
-    except Exception:
-        QUEUES[context.guild.id] = [player]
+    if context.guild.id not in SERVERS:
+        SERVERS[context.guild.id] = {}
 
-    # print(QUEUES[context.guild.id])
+    try:
+        SERVERS[context.guild.id]["QUEUE"].append(player)
+    except Exception:
+        SERVERS[context.guild.id]["QUEUE"] = [player]
+
     if not context.voice_client.is_playing():
         context.voice_client.play(player)
         log(f"Playing {player}")
@@ -104,29 +112,45 @@ async def skip(context: commands.Context):
     await context.send(f"{context.author.mention} Skipped the current song!")
 
 
+async def loop(context: commands.Context):
+    if SERVERS.get(context.guild.id, {}).get("LOOP", False):
+        SERVERS[context.guild.id]["LOOP"] = False
+        await context.send(f"{context.author.mention} | 🏮 Loop disabled")
+    else:
+        SERVERS[context.guild.id]["LOOP"] = True
+        await context.send(f"{context.author.mention} | 🔁 Loop enabled!")
+
+
+async def looping(context: commands.Context):
+    if SERVERS.get(context.guild.id, {}).get("LOOP", False):
+        await context.send(f"{context.author.mention} | 🔁 Loop is ON!")
+    else:
+        await context.send(f"{context.author.mention} | 🏮 Loop is OFF!")
+
+
 async def queue(context: commands.Context):
     log(f"Sending the current guild queue (guild: {context.guild.name} | {context.guild.id})")
-    if context.guild.id not in QUEUES or len(QUEUES[context.guild.id]) == 0:
+    if len(SERVERS.get(context.guild.id, {}).get("QUEUE", [])) == 0:
         await context.send(f"{context.author.mention} The queue is empty")
         return
     embed = discord.Embed(title='Current Queue',
                           colour=discord.Colour.blue())
-    embed.add_field(name='Queue', value="\n".join(f"{i}. {player.title}" for i, player in enumerate(QUEUES[context.guild.id], 1)))
+    embed.add_field(name='Queue', value="\n".join(f"{i}. {player.title}" for i, player in enumerate(SERVERS[context.guild.id]["QUEUE"], 1)))
 
     await context.send(embed=embed)
 
 
 async def clear(context: commands.Context):
-    log("Clearing the queue")
-    QUEUES.pop(context.guild.id, None)
+    log("Clearing the queue and looping status")
+    SERVERS.pop(context.guild.id, None)
     await context.send(f"{context.author.mention} Cleared the queue")
 
 
 async def stop(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
-    log("Stopping")
-    QUEUES.pop(context.guild.id, None)
+    log("Stopping and clearing")
+    SERVERS.pop(context.guild.id, None)
     context.voice_client.stop()
     await context.voice_client.disconnect()
     await context.send(f"{context.author.mention} Stopped the music!")
