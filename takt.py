@@ -140,6 +140,11 @@ async def queue(context: commands.Context):
     embed = discord.Embed(title='Current Queue',
                           colour=discord.Colour.blue())
     embed.add_field(name='Queue', value="\n".join(f"{i}. {player.title}" for i, player in enumerate(SERVERS[context.guild.id]["QUEUE"], 1)))
+    length = len(SERVERS[context.guild.id]['QUEUE'])
+    footer = f"{length} song{'s' if length > 1 else ''} in queue"
+    if SERVERS.get(context.guild.id, {}).get("LOOP", False):
+        footer += "\n🔁 Loop enabled"
+    embed.set_footer(text=footer)
 
     await context.send(embed=embed)
 
@@ -190,6 +195,9 @@ async def playing(context: commands.Context):
         # embed.add_field(name='Description', value=context.voice_client.source.description)
         if context.voice_client.source.upload_date:
             embed.add_field(name='Uploaded', value=context.voice_client.source.upload_date.strftime("%d/%m/%Y"))
+
+        if SERVERS.get(context.guild.id, {}).get("LOOP", False):
+            embed.add_field(name="Options", value="🔁 Loop enabled")
 
         await context.send(f'{context.author.mention} Now playing: **{context.voice_client.source.title}**', embed=embed)
     else:
