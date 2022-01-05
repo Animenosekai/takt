@@ -33,6 +33,17 @@ class TaktAudioPlayer(FFmpegOpusAudio):
         self.channel = self.info.get("uploader", None)
         self.channel_link = self.info.get("uploader", None)
         self.thumbnail = self.info.get("thumbnail", None)
+        
+        # other
+        self.bitrate = bitrate
+        self.volume = volume
+        self.codec = codec
+        self.executable = executable
+        self.pipe = pipe
+        self.stderr = stderr
+        self.before_options = before_options
+        self.options = options
+
 
         log(f"Setting the volume to {volume}")
         options += f' -filter:a "volume={volume}"'
@@ -79,3 +90,6 @@ class TaktAudioPlayer(FFmpegOpusAudio):
 
     def __repr__(self) -> str:
         return "TaktAudio(title={}, duration={}, played={} sec)".format(self.title, self.duration, round(self.played / 1000, 2))
+
+    def new(self):
+        return TaktAudioPlayer(self.info, bitrate=self.bitrate, volume=self.volume, codec=self.codec, executable=self.executable, pipe=self.pipe, stderr=self.stderr, before_options=self.before_options, options=self.options)

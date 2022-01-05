@@ -38,7 +38,9 @@ def create_end_event(context: commands.Context, loop: asyncio.events.AbstractEve
                 return
 
             if SERVERS[context.guild.id].get("LOOP", False):  # loop mechanism
-                QUEUE.append(now_playing)
+                new = now_playing.new()
+                new.on_ended = create_end_event(context, loop)
+                QUEUE.append(new)
 
             if len(QUEUE) >= 1:
                 log("More than one song in queue")
