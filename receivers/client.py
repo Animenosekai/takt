@@ -61,8 +61,8 @@ async def clear_receiver(context: commands.Context):
 
 
 @client.command(name="loop", pass_context=True, aliases=["repeat", "repeat-song", "repeatsong"])
-async def loop_receiver(context: commands.Context):
-    await loop(context)
+async def loop_receiver(context: commands.Context, *args):
+    await loop(context, " ".join(args))
 
 
 @client.command(name="looping", pass_context=True, aliases=["is-looping", "islooping"])
@@ -72,8 +72,8 @@ async def looping_receiver(context: commands.Context):
 client.remove_command("help")
 
 @client.command(name="help", pass_context=True, aliases=["h", "commands", "command", "cmds", "cmd"])
-async def help_receiver(context: commands.Context):
-    await help(context)
+async def help_receiver(context: commands.Context, *args):
+    await help(context, " ".join(args))
 
 
 # custom commands

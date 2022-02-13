@@ -137,15 +137,27 @@ async def skip(context: commands.Context):
 
 
 @decorate
-async def loop(context: commands.Context):
+async def loop(context: commands.Context, loop: str = None):
     if context.guild.id not in SERVERS:
         SERVERS[context.guild.id] = {}
-    if SERVERS.get(context.guild.id, {}).get("LOOP", False):
-        SERVERS[context.guild.id]["LOOP"] = False
-        await context.send(f"{context.author.mention} | 🏮 Loop disabled")
+    if loop is not None:
+        loop = str(loop).lower().replace(' ', '')
+        if loop in ("yes", "1", "true", "enable", "active", "activate"):
+            loop = True
+        elif loop in ("no", "0", "false", "disable", "inactive", "deactivate"):
+            loop = False
+        else:
+            await context.send(f"{context.author.mention} Invalid argument `{loop}`")
+            return
     else:
+        loop = not SERVERS.get(context.guild.id, {}).get("LOOP", False)
+
+    if loop:
         SERVERS[context.guild.id]["LOOP"] = True
         await context.send(f"{context.author.mention} | 🔁 Loop enabled!")
+    else:
+        SERVERS[context.guild.id]["LOOP"] = False
+        await context.send(f"{context.author.mention} | 🏮 Loop disabled")
 
 
 @decorate
@@ -261,27 +273,107 @@ async def latency(context: commands.Context):
     await context.send(f"{context.author.mention} The current latency is **{round(context.voice_client.latency * 1000, 2)}ms** (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
 
 
+HELP = {
+    "play <search term>": {
+        "msg": "Searches on YouTube and plays the first result",
+        "example": "play Bad Apple",
+        "aliases": ["p <search term>", "start <search term>"]
+    },
+    "play <link>": {
+        "msg": "Play the given link",
+        "example": "play https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "aliases": ["p <link>", "start <link>"]
+    },
+    "playing": {
+        "msg": "Show the current song playing",
+        "aliases": ["now", "now-playing", "nowplaying", "np"]
+    },
+    "pause": {
+        "msg": "Pause the current song"
+    },
+    "resume": {
+        "msg": "Resume the current song",
+        "aliases": ["continue", "unpause"]
+    },
+    "skip": {
+        "msg": "Skip the current song",
+        "aliases": ["s", "next"]
+    },
+    "queue": {
+        "msg": "Show the current queue",
+        "aliases": ["q", "list", "list-queue", "listqueue", "song-queue", "songs", "musics", "songqueue"]
+    },
+    "clear": {
+        "msg": "Clear the queue"
+    },
+    "stop": {
+        "msg": "Stop the music and clear the queue"
+    },
+    "loop": {
+        "msg": "Toggle looping",
+        "aliases": ["repeat", "repeat-song", "repeatsong"]
+    },
+    "loop <true/false>": {
+        "msg": "Enable or disable looping",
+        "example": "loop true"
+    },
+    "looping": {
+        "msg": "Show the current loop status",
+        "aliases": ["is-looping", "islooping"]
+    },
+    "latency": {
+        "msg": "Show the current latency"
+    },
+    "connected": {
+        "msg": "Show if the bot is connected to a voice channel",
+        "aliases": ["isconnected"]
+    },
+    "help": {
+        "msg": "Show this message",
+        "aliases": ["h", "commands", "command", "cmds", "cmd"]
+    },
+    "help <command>": {
+        "msg": "Show specific command's help",
+        "example": "help play"
+    }
+}
+
+ALIASES = {}
+for cmd, data in HELP.items():
+    for alias in data.get("aliases", []):
+        a = str(alias).replace(" ", "").lower()
+        ALIASES[a] = cmd
+        ALIASES[a.split("<")[0]] = cmd
+    c = str(cmd).replace(" ", "").lower()
+    ALIASES[c] = cmd
+    ALIASES[c.split("<")[0]] = cmd
+
+
 @decorate
-async def help(context: commands.Context):
+async def help(context: commands.Context, command: str = ""):
     embed = discord.Embed(title='🏮 Help Center', colour=discord.Colour.blue())
-    embed.add_field(name='Commands', value=f"""
-`{COMMAND_PREFIX}play <link or search term>`: To play the given link or searches for the given term
-`{COMMAND_PREFIX}playing`: Checks if the bot is playing something
-`{COMMAND_PREFIX}queue`: Returns the current queue
-`{COMMAND_PREFIX}clear`: Clears the queue
-`{COMMAND_PREFIX}connected`: If takt is connected to a voice channel
-`{COMMAND_PREFIX}loop`: To toggle the looping of the current queue
-`{COMMAND_PREFIX}looping`: Gives if the queue is looping
-`{COMMAND_PREFIX}pause`: To pause the playing song
-`{COMMAND_PREFIX}paused`: If a song is paused
-`{COMMAND_PREFIX}resume`: Resume if a song is paused
-`{COMMAND_PREFIX}skip`: Skips the current song
-`{COMMAND_PREFIX}stop`: Stops playing any songs (and disconnects)
-`{COMMAND_PREFIX}latency`: Sends back the current bot latency
-`{COMMAND_PREFIX}help`: The current message
-""")
     embed.set_author(name=f"Requested by {context.author}")
     embed.set_footer(text="© Takt by Anise")
+    command = str(command).replace(" ", "").lower()
+    if command == "":
+        embed.add_field(name='Commands', value="\n".join(
+            f"`{COMMAND_PREFIX}{cmd}`{': ' + str(data['msg']) if 'msg' in data else ''}" for cmd, data in HELP.items()))
+        await context.send(embed=embed)
+        return
+    if command.startswith(COMMAND_PREFIX):
+        command = command[1:]
+    if command not in ALIASES:
+        await context.send(f"{context.author.mention} I don't know that command")
+        return
+    command = ALIASES[command]
+    data = HELP[command]
+    embed.title = f"🏮 Help Center — `{COMMAND_PREFIX}{command}`"
+    if 'msg' in data:
+        embed.add_field(name="Description", value=data['msg'], inline=False)
+    if 'example' in data:
+        embed.add_field(name="Example", value="**" + COMMAND_PREFIX + data['example'] + "**", inline=False)
+    if 'aliases' in data:
+        embed.add_field(name="Aliases", value=", ".join(f"`{COMMAND_PREFIX}{alias}`" for alias in data['aliases']), inline=False)
     await context.send(embed=embed)
 
 # Basic API
