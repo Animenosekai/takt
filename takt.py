@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from nasse.logging import log
 
+from config import COMMAND_PREFIX
 from audio import TaktAudioPlayer
 from bot import \
     client  # to redirect the import outside (and at the same time load takt)
@@ -230,7 +231,42 @@ async def latency(context: commands.Context):
     await context.send(f"{context.author.mention} The current latency is **{round(context.voice_client.latency * 1000, 2)}ms** (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
 
 
+async def help(context: commands.Context):
+    embed = discord.Embed(title='🏮 Help Center', colour=discord.Colour.blue())
+    embed.add_field(name='Commands', value=f"""
+`{COMMAND_PREFIX}play <link or search term>`: To play the given link or searches for the given term
+`{COMMAND_PREFIX}playing`: Checks if the bot is playing something
+`{COMMAND_PREFIX}queue`: Returns the current queue
+`{COMMAND_PREFIX}clear`: Clears the queue
+`{COMMAND_PREFIX}connected`: If takt is connected to a voice channel
+`{COMMAND_PREFIX}loop`: To toggle the looping of the current queue
+`{COMMAND_PREFIX}looping`: Gives if the queue is looping
+`{COMMAND_PREFIX}pause`: To pause the playing song
+`{COMMAND_PREFIX}paused`: If a song is paused
+`{COMMAND_PREFIX}resume`: Resume if a song is paused
+`{COMMAND_PREFIX}skip`: Skips the current song
+`{COMMAND_PREFIX}stop`: Stops playing any songs (and disconnects)
+`{COMMAND_PREFIX}latency`: Sends back the current bot latency
+`{COMMAND_PREFIX}help`: The current message
+""")
+    embed.set_author(name=f"Requested by {context.author}")
+    embed.set_footer(text="© Takt by Anise")
+    await context.send(embed=embed)
+
 # Basic API
 """
 discord.VoiceClient().disconnect()
 """
+
+# custom commands
+
+
+async def saxo(context: commands.Context):
+    log(f"Custom command `saxo` by {context.author.name}")
+    await context.send("<@&942519767489732678> | Venez rejoindre le concert exclusif de <@511255622021283841> en vocal !")
+
+
+async def test(context: commands.Context):
+    log("Test Command")
+    print(context)
+    print({context.author.id: context.author.name})
