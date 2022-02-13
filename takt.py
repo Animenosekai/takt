@@ -1,17 +1,34 @@
 import asyncio
+from time import time
 from datetime import timedelta
 
 import discord
 from discord.ext import commands
-from nasse.logging import log
+from nasse.logging import log, LogLevels
 
-from config import COMMAND_PREFIX
+from config import COMMAND_PREFIX, COOLDOWN
 from audio import TaktAudioPlayer
 from bot import \
     client  # to redirect the import outside (and at the same time load takt)
 from exceptions import NotInVoiceChannel, NoVoiceClient
 
 SERVERS = {}
+
+
+def decorate(func):
+    async def wrapper(context: commands.Context, *args, **kwargs):
+        if context.guild.id not in SERVERS:
+            SERVERS[context.guild.id] = {}
+        if "RATE" not in SERVERS[context.guild.id]:
+            SERVERS[context.guild.id]["RATE"] = {}
+        distance = time() - SERVERS[context.guild.id]["RATE"].get(context.author.id, 0)
+        if distance < COOLDOWN:
+            log(f"`{context.author.name}` is rate limited for now ({COOLDOWN - distance} seconds remaining)", level=LogLevels.INFO)
+            return await context.send(f"🏮 {context.author.mention} You are rate limited for now ({round(COOLDOWN - distance, 2)} seconds remaining)")
+        result = await func(context, *args, **kwargs)
+        SERVERS[context.guild.id]["RATE"][context.author.id] = time()
+        return result
+    return wrapper
 
 
 def human_format(number: int):
@@ -54,6 +71,7 @@ def create_end_event(context: commands.Context, loop: asyncio.events.AbstractEve
     return on_ended
 
 
+@decorate
 async def play(context: commands.Context, link: str):
     if context.author.voice is None:
         raise NotInVoiceChannel
@@ -87,6 +105,7 @@ async def play(context: commands.Context, link: str):
         await context.send(f'{context.author.mention} | 🎏 Added **"{player.title}"** to the queue')
 
 
+@decorate
 async def pause(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -95,6 +114,7 @@ async def pause(context: commands.Context):
     await context.send(f"{context.author.mention} Paused")
 
 
+@decorate
 async def resume(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -106,6 +126,7 @@ async def resume(context: commands.Context):
     await context.send(f"{context.author.mention} Resumed")
 
 
+@decorate
 async def skip(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -115,6 +136,7 @@ async def skip(context: commands.Context):
     await context.send(f"{context.author.mention} Skipped the current song!")
 
 
+@decorate
 async def loop(context: commands.Context):
     if context.guild.id not in SERVERS:
         SERVERS[context.guild.id] = {}
@@ -126,6 +148,7 @@ async def loop(context: commands.Context):
         await context.send(f"{context.author.mention} | 🔁 Loop enabled!")
 
 
+@decorate
 async def looping(context: commands.Context):
     if SERVERS.get(context.guild.id, {}).get("LOOP", False):
         await context.send(f"{context.author.mention} | 🔁 Loop is ON!")
@@ -133,6 +156,7 @@ async def looping(context: commands.Context):
         await context.send(f"{context.author.mention} | 🏮 Loop is OFF!")
 
 
+@decorate
 async def queue(context: commands.Context):
     log(f"Sending the current guild queue (guild: {context.guild.name} | {context.guild.id})")
     if len(SERVERS.get(context.guild.id, {}).get("QUEUE", [])) == 0:
@@ -150,12 +174,14 @@ async def queue(context: commands.Context):
     await context.send(embed=embed)
 
 
+@decorate
 async def clear(context: commands.Context):
     log("Clearing the queue and looping status")
     SERVERS.pop(context.guild.id, None)
     await context.send(f"{context.author.mention} Cleared the queue")
 
 
+@decorate
 async def stop(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -166,6 +192,7 @@ async def stop(context: commands.Context):
     await context.send(f"{context.author.mention} Stopped the music!")
 
 
+@decorate
 async def playing(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -205,6 +232,7 @@ async def playing(context: commands.Context):
         await context.send(f"{context.author.mention} Nope, nothing is being played")
 
 
+@decorate
 async def paused(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -214,6 +242,7 @@ async def paused(context: commands.Context):
         await context.send(f"{context.author.mention} Nope it seems that no music is paused right now")
 
 
+@decorate
 async def connected(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -223,6 +252,7 @@ async def connected(context: commands.Context):
         await context.send(f"{context.author.mention} Nope I'm not connected")
 
 
+@decorate
 async def latency(context: commands.Context):
     if context.voice_client is None:
         raise NoVoiceClient
@@ -231,6 +261,7 @@ async def latency(context: commands.Context):
     await context.send(f"{context.author.mention} The current latency is **{round(context.voice_client.latency * 1000, 2)}ms** (average: {round(context.voice_client.average_latency * 1000, 2)}ms)")
 
 
+@decorate
 async def help(context: commands.Context):
     embed = discord.Embed(title='🏮 Help Center', colour=discord.Colour.blue())
     embed.add_field(name='Commands', value=f"""
@@ -261,11 +292,13 @@ discord.VoiceClient().disconnect()
 # custom commands
 
 
+@decorate
 async def saxo(context: commands.Context):
     log(f"Custom command `saxo` by {context.author.name}")
     await context.send("<@&942519767489732678> | Venez rejoindre le concert exclusif de <@511255622021283841> en vocal !")
 
 
+@decorate
 async def test(context: commands.Context):
     log("Test Command")
     print(context)
