@@ -1,12 +1,13 @@
+"""manages audio on takt"""
 from datetime import datetime
 
 from discord.player import FFmpegOpusAudio
 from nasse.logging import log
-from nasse.utils.regex import is_url
+from nasse.utils.types import URL
 from youtube_dl import YoutubeDL as YouTubeDL
 from yt_dlp import YoutubeDL as YouTubeDL_P
 
-from exceptions import DownloadError
+from takt.exceptions import DownloadError
 
 
 class TaktAudioPlayer(FFmpegOpusAudio):
@@ -33,7 +34,7 @@ class TaktAudioPlayer(FFmpegOpusAudio):
         self.channel = self.info.get("uploader", None)
         self.channel_link = self.info.get("uploader", None)
         self.thumbnail = self.info.get("thumbnail", None)
-        
+
         # other
         self.bitrate = bitrate
         self.volume = volume
@@ -43,7 +44,6 @@ class TaktAudioPlayer(FFmpegOpusAudio):
         self.stderr = stderr
         self.before_options = before_options
         self.options = options
-
 
         log(f"Setting the volume to {volume}")
         options += f' -filter:a "volume={volume}"'
@@ -61,7 +61,7 @@ class TaktAudioPlayer(FFmpegOpusAudio):
                     "format": "bestaudio",
                     "noplaylist": "True"
                 }) as worker:
-                    if is_url(link):
+                    if URL.REGEX and not URL.REGEX.match(link):
                         info = worker.extract_info(link, download=False)
                     else:
                         info = worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]

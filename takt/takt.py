@@ -1,16 +1,17 @@
+"""the core"""
 import asyncio
 from time import time
 from datetime import timedelta
 
 import discord
 from discord.ext import commands
-from nasse.logging import log, LogLevels
+from nasse.logging import log, LoggingLevel
 
-from config import COMMAND_PREFIX, COOLDOWN
-from audio import TaktAudioPlayer
-from bot import \
+from takt.config import COMMAND_PREFIX, COOLDOWN
+from takt.audio import TaktAudioPlayer
+from takt.bot import \
     client  # to redirect the import outside (and at the same time load takt)
-from exceptions import NotInVoiceChannel, NoVoiceClient
+from takt.exceptions import NotInVoiceChannel, NoVoiceClient
 
 SERVERS = {}
 
@@ -23,7 +24,7 @@ def decorate(func):
             SERVERS[context.guild.id]["RATE"] = {}
         distance = time() - SERVERS[context.guild.id]["RATE"].get(context.author.id, 0)
         if distance < COOLDOWN:
-            log(f"`{context.author.name}` is rate limited for now ({COOLDOWN - distance} seconds remaining)", level=LogLevels.INFO)
+            log(f"`{context.author.name}` is rate limited for now ({COOLDOWN - distance} seconds remaining)", level=LoggingLevel.INFO)
             return await context.send(f"🏮 {context.author.mention} You are rate limited for now ({round(COOLDOWN - distance, 2)} seconds remaining)")
         result = await func(context, *args, **kwargs)
         SERVERS[context.guild.id]["RATE"][context.author.id] = time()
@@ -375,23 +376,3 @@ async def help(context: commands.Context, command: str = ""):
     if 'aliases' in data:
         embed.add_field(name="Aliases", value=", ".join(f"`{COMMAND_PREFIX}{alias}`" for alias in data['aliases']), inline=False)
     await context.send(embed=embed)
-
-# Basic API
-"""
-discord.VoiceClient().disconnect()
-"""
-
-# custom commands
-
-
-@decorate
-async def saxo(context: commands.Context):
-    log(f"Custom command `saxo` by {context.author.name}")
-    await context.send("<@&942519767489732678> | Venez rejoindre le concert exclusif de <@511255622021283841> en vocal !")
-
-
-@decorate
-async def test(context: commands.Context):
-    log("Test Command")
-    print(context)
-    print({context.author.id: context.author.name})

@@ -1,8 +1,9 @@
-from takt import test
+"""receives plain text commands from discord"""
 from discord.ext import commands
-from bot import client
 
-from takt import play, pause, resume, stop, playing, paused, connected, latency, queue, skip, clear, loop, looping, saxo, help
+from takt.bot import client
+from takt.takt import (clear, connected, help, latency, loop, looping, pause,
+                       paused, play, playing, queue, resume, skip, stop)
 
 
 @client.command(name="play", pass_context=True, aliases=["p", "start"])
@@ -71,18 +72,7 @@ async def looping_receiver(context: commands.Context):
 
 client.remove_command("help")
 
+
 @client.command(name="help", pass_context=True, aliases=["h", "commands", "command", "cmds", "cmd"])
 async def help_receiver(context: commands.Context, *args):
     await help(context, " ".join(args))
-
-
-# custom commands
-
-@client.command(name="saxo", pass_context=True)
-async def saxo_receiver(context: commands.Context):
-    await saxo(context)
-
-
-@client.command(name="test", pass_context=True)
-async def test_receiver(context: commands.Context):
-    await test(context)

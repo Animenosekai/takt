@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "takt"
+version = "1.0"
+description = "Power your discord calls with music 🎐"
+license = "MIT"
+authors = ["Animenosekai <animenosekai.mail@gmail.com>"]
+maintainers = ["Animenosekai <animenosekai.mail@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/Animenosekai/takt"
+documentation = "https://github.com/Animenosekai/takt/blob/main/README.md"
+keywords = ["animenosekai", "takt", "discord", "bot", "music", "youtube"]
+classifiers = [
+    # Status
+    "Development Status :: 5 - Production/Stable",
+
+    # Environment
+    "Environment :: Console",
+
+    # Audience
+    "Intended Audience :: End Users/Desktop",
+
+    # Licensing
+    "License :: OSI Approved :: MIT License",
+
+    # Software Requirements
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+
+    # Topics
+    "Topic :: Communications",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: Players",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+"discord.py" = { version = "^1.7", extras = ["voice"] }
+nasse = { git = "https://github.com/Animenosekai/nasse.git", branch = "next" }
+youtube_dl = "2021.12.17"
+yt-dlp = "2023.3.3"
+PyNaCl = "^1.4"
+discord-py-slash-command = "3.0.3"
+
+[tool.poetry.scripts]
+takt = 'takt.__main__:entry'
+
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/Animenosekai/takt/issues"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.4.1"
+autopep8 = "^2.0.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

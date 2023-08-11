@@ -1,1 +1,1 @@
-worker: python run.py -d
+worker: takt --debug

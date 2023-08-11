@@ -3,19 +3,17 @@ error.py
 
 The error handler for Takt.
 """
-from traceback import print_exc
-
-from nasse.logging import LogLevels, log
+from nasse.logging import LoggingLevel, log, logger
 
 from discord.ext import commands
 
-from config import DEBUG_MODE
-from exceptions import TaktException
+from takt.config import DEBUG_MODE
+from takt.exceptions import TaktException
 
 
 async def error_handler(context, error: commands.CommandInvokeError):
     if DEBUG_MODE:
-        print_exc()
+        logger.print_exception()
     if isinstance(error, commands.CommandInvokeError):
         error = error.original
     if isinstance(error, TaktException):
@@ -24,5 +22,5 @@ async def error_handler(context, error: commands.CommandInvokeError):
         pass
     else:
         log("An unknown error occured: {name} {error}".format(
-            name=error.__class__.__name__, error=str(error)), level=LogLevels.ERROR)
+            name=error.__class__.__name__, error=str(error)), level=LoggingLevel.ERROR)
         await context.send(TaktException.MESSAGE.format(mention=context.author.mention))
