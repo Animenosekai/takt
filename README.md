@@ -38,6 +38,7 @@
   - [Discord](#discord)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
+- [Built With](#built-with)
 - [Authors](#authors)
 - [Licensing](#licensing)
 
@@ -181,6 +182,15 @@ Feel free to report any issue you might encounter on takt's GitHub page.
 ## Contributing
 
 Pull requests are welcome. For major changes, please open a discussion first to discuss what you would like to change.
+
+## Built With
+
+- [nasse](https://github.com/Animenosekai/nasse) - the logging system
+- [discord.py](https://github.com/Rapptz/discord.py) - to use the discord API
+- [discord-py-slash-command](https://github.com/interactions-py/interactions.py) - to create slash commands on discord
+- [youtube-dl](https://github.com/ytdl-org/youtube-dl) - to retrieve sources to play in voice channels
+- [youtube-dlp](https://github.com/yt-dlp/yt-dlp) - to retrieve sources to play in voice channels
+- [ffmpeg](http://ffmpeg.org) - to process audio
 
 ## Authors
 
