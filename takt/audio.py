@@ -55,13 +55,13 @@ class TaktAudioPlayer(FFmpegOpusAudio):
     async def open(link, *, bitrate=128, volume: float = 0.2, codec="nocopy", executable='ffmpeg', pipe=False, stderr=None, before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", options='-vn'):
         log(f"Creating a new TaktAudioPlayer with {link}")
         info = None
-        for WORKER in (YouTubeDL, YouTubeDL_P):
+        for WORKER in (YouTubeDL_P, YouTubeDL):
             try:
                 with WORKER({
                     "format": "bestaudio",
                     "noplaylist": "True"
                 }) as worker:
-                    if URL.REGEX and not URL.REGEX.match(link):
+                    if URL.REGEX and URL.REGEX.match(link):
                         info = worker.extract_info(link, download=False)
                     else:
                         info = worker.extract_info(f"ytsearch:{link}", download=False)["entries"][0]
