@@ -486,7 +486,9 @@ multidict==6.0.4 ; python_version >= "3.8" and python_version < "4.0" \
 mutagen==1.46.0 ; python_version >= "3.8" and python_version < "4.0" \
     --hash=sha256:6e5f8ba84836b99fe60be5fb27f84be4ad919bbb6b49caa6ae81e70584b55e58 \
     --hash=sha256:8af0728aa2d5c3ee5a727e28d0627966641fddfe804c23eabb5926a4d770aed5
-nasse @ git+https://github.com/Animenosekai/nasse.git@next ; python_version >= "3.8" and python_version < "4.0"
+nasse==2.0.0 ; python_version >= "3.8" and python_version < "4.0" \
+    --hash=sha256:1a1a33000d4929b1bafb47686d7d586686d9f3d3562418e85bd8f18cfd7d6e44 \
+    --hash=sha256:54349c2dbc8f72af2083989c48b3871421cb3cf23e644011caed2e64698eff9d
 nh3==0.2.14 ; python_version >= "3.8" and python_version < "4.0" \
     --hash=sha256:116c9515937f94f0057ef50ebcbcc10600860065953ba56f14473ff706371873 \
     --hash=sha256:18415df36db9b001f71a42a3a5395db79cf23d556996090d293764436e98e8ad \

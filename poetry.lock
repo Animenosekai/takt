@@ -881,28 +881,24 @@ files = [
 
 [[package]]
 name = "nasse"
-version = "2.0.0rc1"
+version = "2.0.0"
 description = "A web server framework written on top of Flask which lets you focus on your ideas 🍡"
 optional = false
-python-versions = "^3.8"
-files = []
-develop = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nasse-2.0.0-py3-none-any.whl", hash = "sha256:54349c2dbc8f72af2083989c48b3871421cb3cf23e644011caed2e64698eff9d"},
+    {file = "nasse-2.0.0.tar.gz", hash = "sha256:1a1a33000d4929b1bafb47686d7d586686d9f3d3562418e85bd8f18cfd7d6e44"},
+]
 
 [package.dependencies]
-flask = "^2"
-flask-compress = "^1.10"
-miko = "^1.1"
-nh3 = "^0.2.14"
-requests = "^2"
-rich = "^13"
-textual = "^0.30.0"
-watchdog = "^3.0.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/Animenosekai/nasse.git"
-reference = "next"
-resolved_reference = "0ff3ed1bf76c0894d9e02946979e101b5239409d"
+flask = ">=2,<3"
+flask-compress = ">=1.10,<2.0"
+miko = ">=1.1,<2.0"
+nh3 = ">=0.2.14,<0.3.0"
+requests = ">=2,<3"
+rich = ">=13,<14"
+textual = ">=0.30.0,<0.31.0"
+watchdog = ">=3.0.0,<4.0.0"
 
 [[package]]
 name = "nh3"
@@ -1432,4 +1428,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "19547e6ddc5e5d60ba24ee8ba4c58fd2529a5e284927d4993392568275965809"
+content-hash = "67528f91bc7bd191e8b90583dfba9c13ae8dafe54ca825debb1413f74dd8375d"
