@@ -38,7 +38,7 @@ python = "^3.8"
 "discord.py" = { version = "^1.7", extras = ["voice"] }
 nasse = "^2"
 youtube_dl = "2021.12.17"
-yt-dlp = "2023.3.3"
+yt-dlp = "2023.7.6"
 PyNaCl = "^1.4"
 discord-py-slash-command = "3.0.3"
 
