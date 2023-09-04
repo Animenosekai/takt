@@ -881,13 +881,13 @@ files = [
 
 [[package]]
 name = "nasse"
-version = "2.0.0"
+version = "2.0.2"
 description = "A web server framework written on top of Flask which lets you focus on your ideas 🍡"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nasse-2.0.0-py3-none-any.whl", hash = "sha256:54349c2dbc8f72af2083989c48b3871421cb3cf23e644011caed2e64698eff9d"},
-    {file = "nasse-2.0.0.tar.gz", hash = "sha256:1a1a33000d4929b1bafb47686d7d586686d9f3d3562418e85bd8f18cfd7d6e44"},
+    {file = "nasse-2.0.2-py3-none-any.whl", hash = "sha256:acec9c206e6a13409ad703d7bdda19db0a9d16251a5aa117c95f6f6f036a52b9"},
+    {file = "nasse-2.0.2.tar.gz", hash = "sha256:4fad0406967972b62903d34121b9ba0b4abb8919d622a9f7923e921df42ae595"},
 ]
 
 [package.dependencies]
