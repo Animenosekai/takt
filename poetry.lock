@@ -1403,13 +1403,13 @@ files = [
 
 [[package]]
 name = "yt-dlp"
-version = "2023.7.6"
+version = "2023.10.7"
 description = "A youtube-dl fork with additional features and patches"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "yt-dlp-2023.7.6.tar.gz", hash = "sha256:cb58373869c8ccb5034746f91cfccd6d25ea697090dfd6f93e9034d51eb4aed2"},
-    {file = "yt_dlp-2023.7.6-py2.py3-none-any.whl", hash = "sha256:b33b3f68751f33dd8290f1f61f7a011679b3b512aa223df3bff496688bc0bd19"},
+    {file = "yt-dlp-2023.10.7.tar.gz", hash = "sha256:fc86657a9b240cf65fef3ff627e4a0de335e725936fe70d4402c71dd97452f36"},
+    {file = "yt_dlp-2023.10.7-py2.py3-none-any.whl", hash = "sha256:5f5253aec0a7e18c991d7412ee293eee99f73249b360f4adb9a3f529b769d9d9"},
 ]
 
 [package.dependencies]
@@ -1438,4 +1438,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "af7fd028baca3987b00d0a624cbc422e75bc347219ca2b3310fd8183a7d70c2c"
+content-hash = "dcfd7763b784a6bab7ac8a5920221126141f2f89e6ae15c46c896004557e60f0"
