@@ -1409,21 +1409,23 @@ files = [
 
 [[package]]
 name = "yt-dlp"
-version = "2023.7.6"
+version = "2023.11.16"
 description = "A youtube-dl fork with additional features and patches"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "yt-dlp-2023.7.6.tar.gz", hash = "sha256:cb58373869c8ccb5034746f91cfccd6d25ea697090dfd6f93e9034d51eb4aed2"},
-    {file = "yt_dlp-2023.7.6-py2.py3-none-any.whl", hash = "sha256:b33b3f68751f33dd8290f1f61f7a011679b3b512aa223df3bff496688bc0bd19"},
+    {file = "yt-dlp-2023.11.16.tar.gz", hash = "sha256:f0ccdaf12e08b15902601a4671c7ab12906d7b11de3ae75fa6506811c24ec5da"},
+    {file = "yt_dlp-2023.11.16-py2.py3-none-any.whl", hash = "sha256:0322ba85aa4afdb75f8641ed550e5958964daff034aeb477abb15031fd9a51ed"},
 ]
 
 [package.dependencies]
-brotli = {version = "*", markers = "platform_python_implementation == \"CPython\""}
-brotlicffi = {version = "*", markers = "platform_python_implementation != \"CPython\""}
+brotli = {version = "*", markers = "implementation_name == \"cpython\""}
+brotlicffi = {version = "*", markers = "implementation_name != \"cpython\""}
 certifi = "*"
 mutagen = "*"
 pycryptodomex = "*"
+requests = ">=2.31.0,<3"
+urllib3 = ">=1.26.17,<3"
 websockets = "*"
 
 [[package]]
@@ -1444,4 +1446,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "af7fd028baca3987b00d0a624cbc422e75bc347219ca2b3310fd8183a7d70c2c"
+content-hash = "e2302886592767f6db5e8bfcd874e261f72684f1c2969ff692d79aca745264e7"
